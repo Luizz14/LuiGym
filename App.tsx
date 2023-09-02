@@ -18,7 +18,6 @@ export default function App() {
   })
 
   return (
-    //theme={THEME}
     <NativeBaseProvider theme={THEME}>
       <StatusBar
         barStyle='light-content'

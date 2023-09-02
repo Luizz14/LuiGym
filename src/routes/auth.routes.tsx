@@ -5,6 +5,7 @@ import {
 
 import { SignIn } from '@screens/SignIn'
 import { SignUp } from '@screens/SignUp'
+import { Header } from 'react-native/Libraries/NewAppScreen'
 
 type AuthRoutes = {
   signIn: undefined
@@ -17,9 +18,17 @@ const { Navigator, Screen } = createNativeStackNavigator<AuthRoutes>()
 
 export function AuthRoutes() {
   return (
-    <Navigator>
-      <Screen name='signIn' component={SignIn} />
-      <Screen name='signUp' component={SignUp} />
+    <Navigator screenOptions={{ headerShown: false }}>
+      <Screen
+        name='signIn'
+        component={SignIn}
+        options={{ animation: 'slide_from_right' }}
+      />
+      <Screen
+        name='signUp'
+        component={SignUp}
+        options={{ animation: 'slide_from_right' }}
+      />
     </Navigator>
   )
 }
