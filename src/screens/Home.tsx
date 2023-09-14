@@ -39,9 +39,8 @@ export function Home() {
           <Text color={'gray.200'} fontSize={'sm'}>
             4
           </Text>
-
-          <ExerciseCard />
         </HStack>
+        <ExerciseCard />
       </VStack>
     </VStack>
   )
