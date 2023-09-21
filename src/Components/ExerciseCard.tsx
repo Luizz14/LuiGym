@@ -24,6 +24,7 @@ export function ExerciseCard({ ...rest }: Props) {
         pb: 0,
         mt: 2,
       }}
+      {...rest}
     >
       <HStack bg={'gray.500'} alignItems={'center'} p={2} pr={4} rounded={'lg'}>
         <Image
