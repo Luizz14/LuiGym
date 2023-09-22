@@ -23,7 +23,7 @@ export function Profile() {
     <VStack flex={1}>
       <ScreenHeader title='Perfil' />
 
-      <ScrollView contentContainerStyle={{ paddingBottom: 56 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 26 }}>
         <Center mt={6} px={10}>
           {photoIsLoading ? (
             <Skeleton
@@ -43,7 +43,7 @@ export function Profile() {
 
           <TouchableOpacity>
             <Text
-              color={'green.500'}
+              color={'blue.500'}
               fontWeight={'bold'}
               fontSize={'md'}
               mt={2}
@@ -70,7 +70,7 @@ export function Profile() {
           <Input bg={'gray.600'} placeholder='Senha antiga' secureTextEntry />
           <Input bg={'gray.600'} placeholder='Nova senha' secureTextEntry />
 
-          <Button title='Atualizar' mt={4} />
+          <Button title='Atualizar' />
         </Center>
       </ScrollView>
     </VStack>

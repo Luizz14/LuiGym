@@ -34,7 +34,7 @@ export function Group({ name, isActive = false, ...rest }: Props) {
         bg={'gray.500'}
       >
         <Text
-          color={isActive ? 'green.500' : 'gray.200'}
+          color={isActive ? 'blue.500' : 'gray.200'}
           textTransform={'uppercase'}
           fontSize={'xs'}
           fontWeight={'bold'}

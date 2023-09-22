@@ -17,7 +17,7 @@ export function HistoryCard({ group, exercise, hour }: Props) {
       alignItems={'center'}
       justifyContent={'space-between'}
     >
-      <VStack mr={4}>
+      <VStack mr={4} flex={1}>
         <Heading color={'white'} fontSize={'md'} textTransform={'capitalize'}>
           {group}
         </Heading>
