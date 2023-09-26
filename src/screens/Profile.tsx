@@ -8,6 +8,8 @@ import {
   Text,
   VStack,
 } from 'native-base'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
@@ -18,6 +20,44 @@ const PHOTO_SIZE = 33
 
 export function Profile() {
   const [photoIsLoading, setPhotoIsLoading] = useState(false)
+  const [userPhoto, setUserPhoto] = useState('https://github.com/luizz14.png')
+
+  async function handleUserPhotoSelect() {
+    setPhotoIsLoading(true)
+
+    try {
+      const photoSelected = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        quality: 1,
+        aspect: [4, 4],
+        allowsEditing: true,
+      })
+
+      if (photoSelected.canceled) {
+        return
+      }
+
+      const photoSelectedUri = photoSelected.assets[0].uri
+
+      if (photoSelectedUri) {
+        const photoInfo = await FileSystem.getInfoAsync(photoSelectedUri)
+
+        setUserPhoto(photoSelectedUri)
+        /* if (photoInfo.size && (photoInfo.size)) {
+          return toast.show({
+            title: 'Essa img eh mt grande',
+            placement: 'top',
+            bgColor: 'red.500'
+          })
+
+        } */
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setPhotoIsLoading(false)
+    }
+  }
 
   return (
     <VStack flex={1}>
@@ -35,13 +75,13 @@ export function Profile() {
             />
           ) : (
             <UserPhoto
-              source={{ uri: 'https://github.com/luizz14.png' }}
+              source={{ uri: userPhoto }}
               alt={'Foto de perfil'}
               size={33}
             />
           )}
 
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleUserPhotoSelect}>
             <Text
               color={'blue.500'}
               fontWeight={'bold'}
