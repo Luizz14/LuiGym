@@ -8,6 +8,7 @@ type Props = IPressableProps & {
 export function Button({ title, variant = 'solid', ...rest }: Props) {
   return (
     <Pressable
+      w={'full'}
       pb={2}
       bg={variant === 'outline' ? 'transparent' : 'blue.700'}
       justifyContent={'center'}
@@ -21,7 +22,13 @@ export function Button({ title, variant = 'solid', ...rest }: Props) {
       }}
       {...rest}
     >
-      <Center w={'full'} h={14} bg={'blue.500'} p={2} rounded={'sm'}>
+      <Center
+        w={'full'}
+        h={14}
+        bg={variant === 'outline' ? 'transparent' : 'blue.500'}
+        p={2}
+        rounded={'sm'}
+      >
         <Text
           color={variant === 'outline' ? 'blue.500' : 'white'}
           fontFamily={'heading'}

@@ -5,7 +5,6 @@ import {
 
 import { SignIn } from '@screens/SignIn'
 import { SignUp } from '@screens/SignUp'
-import { Header } from 'react-native/Libraries/NewAppScreen'
 
 type AuthRoutes = {
   signIn: undefined
