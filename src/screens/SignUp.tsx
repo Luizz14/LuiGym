@@ -48,8 +48,16 @@ export function SignUp() {
     navigation.goBack()
   }
 
-  function handleSignUp(data: any) {
-    console.log(data)
+  function handleSignUp({ name, email, password }: HookFormProps) {
+    fetch('http://192.168.15.58:3333/users', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name, email, password }),
+    })
+    console.log('FOI ai')
   }
 
   return (
