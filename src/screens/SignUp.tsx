@@ -1,6 +1,14 @@
 import { useForm, Controller } from 'react-hook-form'
 import { useNavigation } from '@react-navigation/native'
-import { Center, Heading, Image, Text, VStack, ScrollView } from 'native-base'
+import {
+  Center,
+  Heading,
+  Image,
+  Text,
+  VStack,
+  ScrollView,
+  useToast,
+} from 'native-base'
 
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,8 +16,13 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import LogoSvg from '@assets/logo.svg'
 import backGroundImg from '@assets/background.png'
 
+import { api } from '@services/api'
+
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
+
+import { AppError } from '@utils/AppError'
+import { useAuth } from '@hooks/useAuth'
 
 type HookFormProps = {
   name: string
@@ -35,7 +48,10 @@ const signUpSchema = yup.object({
 })
 
 export function SignUp() {
+  const toast = useToast()
   const navigation = useNavigation()
+  const { signIn } = useAuth()
+
   const {
     control,
     handleSubmit,
@@ -48,16 +64,22 @@ export function SignUp() {
     navigation.goBack()
   }
 
-  function handleSignUp({ name, email, password }: HookFormProps) {
-    fetch('http://192.168.15.58:3333/users', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ name, email, password }),
-    })
-    console.log('FOI ai')
+  async function handleSignUp({ name, email, password }: HookFormProps) {
+    try {
+      await api.post('/users', { name, email, password })
+      await signIn(email, password)
+    } catch (error) {
+      const isAppError = error instanceof AppError
+      const title = isAppError
+        ? error.message
+        : 'Não foi possivel realizar o cadastro. Tente novamente mais tarde!'
+
+      toast.show({
+        title,
+        placement: 'top',
+        bgColor: 'red.500',
+      })
+    }
   }
 
   return (
@@ -152,17 +174,18 @@ export function SignUp() {
             )}
           />
 
-          <Button
-            title='Criar e acessar'
-            onPress={handleSubmit(handleSignUp)}
-          />
+          <VStack w={'full'} space={4}>
+            <Button
+              title='Criar e acessar'
+              onPress={handleSubmit(handleSignUp)}
+            />
 
-          <Button
-            title='Voltar para o login'
-            variant={'outline'}
-            mt={14}
-            onPress={handleGoBack}
-          />
+            <Button
+              title='Voltar para o login'
+              variant={'outline'}
+              onPress={handleGoBack}
+            />
+          </VStack>
         </Center>
       </VStack>
     </ScrollView>

@@ -1,5 +1,17 @@
-import { Center, Heading, Image, Text, VStack, ScrollView } from 'native-base'
+import { Controller, useForm } from 'react-hook-form'
 import { useNavigation } from '@react-navigation/native'
+import {
+  Center,
+  Heading,
+  Image,
+  Text,
+  VStack,
+  ScrollView,
+  useToast,
+} from 'native-base'
+
+import * as yup from 'yup'
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import LogoSvg from '@assets/logo.svg'
 import backGroundImg from '@assets/background.png'
@@ -7,10 +19,57 @@ import backGroundImg from '@assets/background.png'
 import { Input } from '@components/Input'
 import { Button } from '@components/Button'
 
+import { useAuth } from '@hooks/useAuth'
+import { AppError } from '@utils/AppError'
 import { AuthNavigatorRoutesProps } from '@routes/auth.routes'
+import { useState } from 'react'
+
+type HookFormProps = {
+  email: string
+  password: string
+}
+
+const signInSchema = yup.object({
+  email: yup
+    .string()
+    .required('Informe o email!')
+    .email('Insira um endereço de email válido!'),
+  password: yup
+    .string()
+    .required('Insira uma senha')
+    .min(6, 'A senha deve ter pelo menos 6 dígitos.'),
+})
 
 export function SignIn() {
+  const [isLoading, setIsLoading] = useState(false)
+
   const navigation = useNavigation<AuthNavigatorRoutesProps>()
+  const { signIn } = useAuth()
+  const toast = useToast()
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<HookFormProps>({
+    resolver: yupResolver(signInSchema),
+  })
+
+  async function handleSignIn({ email, password }: HookFormProps) {
+    try {
+      setIsLoading(true)
+      await signIn(email, password)
+    } catch (error) {
+      setIsLoading(false)
+      const isAppError = error instanceof AppError
+
+      const title = isAppError
+        ? error.message
+        : 'Não foi possivel entrar. Tente novamente mais tarde!'
+
+      toast.show({ title: title, placement: 'top', bgColor: 'red.500' })
+    }
+  }
 
   function handleGoToCreateAccount() {
     navigation.navigate('signUp')
@@ -46,14 +105,32 @@ export function SignIn() {
           >
             Acesse sua conta
           </Heading>
-          <Input
-            placeholder='E-mail'
-            keyboardType='email-address'
-            autoCapitalize='none'
+          <Controller
+            control={control}
+            name='email'
+            render={({ field: { onChange } }) => (
+              <Input
+                placeholder='E-mail'
+                keyboardType='email-address'
+                autoCapitalize='none'
+                onChangeText={onChange}
+              />
+            )}
           />
-          <Input placeholder='Senha' secureTextEntry />
+          <Controller
+            control={control}
+            name='password'
+            render={({ field: { onChange } }) => (
+              <Input
+                placeholder='Senha'
+                autoCapitalize='none'
+                secureTextEntry
+                onChangeText={onChange}
+              />
+            )}
+          />
 
-          <Button title='Acessar' />
+          <Button title='Acessar' onPress={handleSubmit(handleSignIn)} />
 
           <Center mt={24} w={'full'}>
             <Text color={'gray.100'} fontSize={'sm'} mb={3} fontFamily={'body'}>

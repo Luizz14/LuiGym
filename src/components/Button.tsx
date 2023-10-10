@@ -15,7 +15,7 @@ export function Button({ title, variant = 'solid', ...rest }: Props) {
       alignItems={'center'}
       borderWidth={variant === 'outline' ? 1 : 0}
       borderColor={'blue.500'}
-      rounded={'sm'}
+      rounded={'2xl'}
       _pressed={{
         mt: 2,
         pb: 0,
@@ -25,9 +25,11 @@ export function Button({ title, variant = 'solid', ...rest }: Props) {
       <Center
         w={'full'}
         h={14}
-        bg={variant === 'outline' ? 'transparent' : 'blue.500'}
         p={2}
-        rounded={'sm'}
+        bg={variant === 'outline' ? 'transparent' : 'blue.500'}
+        borderWidth={variant === 'outline' ? 1 : 0}
+        borderColor={'blue.500'}
+        rounded={'2xl'}
       >
         <Text
           color={variant === 'outline' ? 'blue.500' : 'white'}
