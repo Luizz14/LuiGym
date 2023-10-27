@@ -15,8 +15,9 @@ import {
 
 export type AuthContextDataProps = {
   user: UserDTO
-  signIn: (email: string, password: string) => Promise<void>
   isLoadingUserData: boolean
+  signIn: (email: string, password: string) => Promise<void>
+  userUpdatedProfile: (userUpdated: UserDTO) => Promise<void>
   userSignOut: () => void
 }
 
@@ -42,10 +43,14 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
-  async function storageUserAndTokenSave(userData: UserDTO, token: string) {
+  async function storageUserAndTokenSave(
+    userData: UserDTO,
+    token: string,
+    refresh_token: string
+  ) {
     try {
       await storageUserSave(userData)
-      await storageTokenSave(token)
+      await storageTokenSave({ token, refresh_token })
     } catch (error) {
       throw error
     }
@@ -57,8 +62,8 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
 
       await userAndTokenUpdate(data.user, data.token)
 
-      if (data.user && data.token) {
-        storageUserAndTokenSave(data.user, data.token)
+      if (data.user && data.token && data.refresh_token) {
+        storageUserAndTokenSave(data.user, data.token, data.refresh_token)
       }
     } catch (error) {
       throw error
@@ -70,7 +75,7 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
       setIsLoadingUserData(true)
 
       const userLogged = await storageUserGet()
-      const token = await storageTokenGet()
+      const { token } = await storageTokenGet()
 
       if (userLogged && token) {
         await userAndTokenUpdate(userLogged, token)
@@ -96,13 +101,36 @@ export function AuthContextProvider({ children }: AuthContextProviderProps) {
     }
   }
 
+  async function userUpdatedProfile(userUpdated: UserDTO) {
+    try {
+      setUser(userUpdated)
+      await storageUserSave(userUpdated)
+    } catch (error) {
+      throw error
+    }
+  }
+
   useEffect(() => {
     loadUserData()
   }, [])
 
+  useEffect(() => {
+    const subscribe = api.registerInterceptTokenManager(userSignOut)
+
+    return () => {
+      subscribe()
+    }
+  }, [userSignOut])
+
   return (
     <AuthContext.Provider
-      value={{ user, signIn, isLoadingUserData, userSignOut }}
+      value={{
+        user,
+        signIn,
+        isLoadingUserData,
+        userSignOut,
+        userUpdatedProfile,
+      }}
     >
       {children}
     </AuthContext.Provider>

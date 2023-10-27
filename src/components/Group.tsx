@@ -17,6 +17,7 @@ export function Group({ name, isActive = false, ...rest }: Props) {
       alignItems={'center'}
       overflow={'hidden'}
       isPressed={isActive}
+      color={'blue.500'}
       _pressed={{
         marginTop: 1.5,
         paddingBottom: 0,
@@ -30,12 +31,13 @@ export function Group({ name, isActive = false, ...rest }: Props) {
         justifyContent={'center'}
         alignItems={'center'}
         bg={'gray.500'}
+        color={'blue.500'}
       >
         <Text
           color={isActive ? 'blue.500' : 'gray.200'}
           textTransform={'uppercase'}
           fontSize={'xs'}
-          fontWeight={'bold'}
+          fontFamily={'heading'}
         >
           {name}
         </Text>

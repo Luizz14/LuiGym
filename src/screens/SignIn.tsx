@@ -105,6 +105,7 @@ export function SignIn() {
           >
             Acesse sua conta
           </Heading>
+
           <Controller
             control={control}
             name='email'
@@ -117,6 +118,7 @@ export function SignIn() {
               />
             )}
           />
+
           <Controller
             control={control}
             name='password'
@@ -130,7 +132,11 @@ export function SignIn() {
             )}
           />
 
-          <Button title='Acessar' onPress={handleSubmit(handleSignIn)} />
+          <Button
+            title='Acessar'
+            onPress={handleSubmit(handleSignIn)}
+            isLoading={isLoading}
+          />
 
           <Center mt={24} w={'full'}>
             <Text color={'gray.100'} fontSize={'sm'} mb={3} fontFamily={'body'}>

@@ -19,7 +19,7 @@ import { Platform } from 'react-native'
 type AppRoutes = {
   home: undefined
   history: undefined
-  exercise: undefined
+  exercise: { exerciseId: string }
   profile: undefined
 }
 
@@ -38,7 +38,7 @@ export function AppRoutes() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: colors.blue[500],
-        // tabBarInactiveBackgroundColor: colors.gray[200],
+        tabBarInactiveTintColor: colors.gray[200],
         tabBarStyle: {
           backgroundColor: colors.gray[600],
           borderTopWidth: 0,

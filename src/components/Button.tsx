@@ -1,15 +1,23 @@
 import { Pressable, IPressableProps, Text, HStack, Center } from 'native-base'
+import { Loading } from './Loading'
 
 type Props = IPressableProps & {
   title: string
   variant?: 'solid' | 'outline'
+  isLoading?: boolean
 }
 
-export function Button({ title, variant = 'solid', ...rest }: Props) {
+export function Button({
+  title,
+  variant = 'solid',
+  isLoading = false,
+  ...rest
+}: Props) {
   return (
     <Pressable
       w={'full'}
-      pb={2}
+      pb={isLoading ? 0 : 2}
+      mt={isLoading ? 2 : 0}
       bg={variant === 'outline' ? 'transparent' : 'blue.700'}
       justifyContent={'center'}
       alignItems={'center'}
@@ -20,6 +28,7 @@ export function Button({ title, variant = 'solid', ...rest }: Props) {
         mt: 2,
         pb: 0,
       }}
+      isDisabled={isLoading}
       {...rest}
     >
       <Center
@@ -31,13 +40,17 @@ export function Button({ title, variant = 'solid', ...rest }: Props) {
         borderColor={'blue.500'}
         rounded={'2xl'}
       >
-        <Text
-          color={variant === 'outline' ? 'blue.500' : 'white'}
-          fontFamily={'heading'}
-          fontSize={'sm'}
-        >
-          {title}
-        </Text>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <Text
+            color={variant === 'outline' ? 'blue.500' : 'white'}
+            fontFamily={'heading'}
+            fontSize={'sm'}
+          >
+            {title}
+          </Text>
+        )}
       </Center>
     </Pressable>
   )

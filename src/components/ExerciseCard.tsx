@@ -11,9 +11,14 @@ import {
 } from 'native-base'
 import { MaterialIcons } from '@expo/vector-icons'
 
-type Props = IPressableProps & {}
+import { ExerciseDTO } from '@dtos/ExerciseDTO'
+import { api } from '@services/api'
 
-export function ExerciseCard({ ...rest }: Props) {
+type Props = IPressableProps & {
+  data: ExerciseDTO
+}
+
+export function ExerciseCard({ data, ...rest }: Props) {
   return (
     <Pressable
       mb={3}
@@ -29,7 +34,7 @@ export function ExerciseCard({ ...rest }: Props) {
       <HStack bg={'gray.500'} alignItems={'center'} p={2} pr={4} rounded={'lg'}>
         <Image
           source={{
-            uri: 'https://blog.gsuplementos.com.br/wp-content/uploads/2021/04/iStock-1246046696.jpg',
+            uri: `${api.defaults.baseURL}/exercise/thumb/${data.thumb}`,
           }}
           alt='Atividade'
           w={16}
@@ -40,11 +45,11 @@ export function ExerciseCard({ ...rest }: Props) {
         />
         <VStack flex={1}>
           <Heading fontSize={'lg'} color={'white'}>
-            Supino inclinado
+            {data.name}
           </Heading>
 
           <Text fontSize={'sm'} color={'gray.200'} mt={2} numberOfLines={2}>
-            3 séries x 10 repetições
+            {data.series} séries x {data.repetitions} repetições
           </Text>
         </VStack>
 
