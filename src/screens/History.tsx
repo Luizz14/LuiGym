@@ -1,17 +1,11 @@
 import { useCallback, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
-import {
-  Center,
-  Heading,
-  SectionList,
-  Text,
-  VStack,
-  useToast,
-} from 'native-base'
+import { Heading, SectionList, Text, VStack, useToast } from 'native-base'
 
 import { AppError } from '@utils/AppError'
 import { api } from '@services/api'
 
+import { Loading } from '@components/Loading'
 import { HistoryCard } from '@components/HistoryCard'
 import { ScreenHeader } from '@components/ScreenHeader'
 
@@ -56,25 +50,29 @@ export function History() {
     <VStack flex={1}>
       <ScreenHeader title='Histórico de exercício' />
 
-      <SectionList
-        sections={exercise}
-        renderSectionHeader={({ section }) => (
-          <Heading color={'gray.200'} fontSize={'md'} mt={10} mb={3}>
-            {section.title}
-          </Heading>
-        )}
-        renderItem={({ item }) => <HistoryCard data={item} />}
-        contentContainerStyle={
-          exercise.length === 0 && { flex: 1, justifyContent: 'center' }
-        }
-        ListEmptyComponent={() => (
-          <Text color={'gray.100'} textAlign={'center'}>
-            Não há exercícios registrados ainda. {'\n'}
-            Vamos fazer exercícios hoje?
-          </Text>
-        )}
-        px={8}
-      />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <SectionList
+          sections={exercise}
+          renderSectionHeader={({ section }) => (
+            <Heading color={'gray.200'} fontSize={'md'} mt={10} mb={3}>
+              {section.title}
+            </Heading>
+          )}
+          renderItem={({ item }) => <HistoryCard data={item} />}
+          contentContainerStyle={
+            exercise.length === 0 && { flex: 1, justifyContent: 'center' }
+          }
+          ListEmptyComponent={() => (
+            <Text color={'gray.100'} textAlign={'center'}>
+              Não há exercícios registrados ainda. {'\n'}
+              Vamos fazer exercícios hoje?
+            </Text>
+          )}
+          px={8}
+        />
+      )}
     </VStack>
   )
 }
