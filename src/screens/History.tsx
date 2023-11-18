@@ -1,6 +1,16 @@
 import { useCallback, useState } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
-import { Heading, SectionList, Text, VStack, useToast } from 'native-base'
+import {
+  Actionsheet,
+  Box,
+  Heading,
+  SectionList,
+  Text,
+  VStack,
+  View,
+  useDisclose,
+  useToast,
+} from 'native-base'
 
 import { AppError } from '@utils/AppError'
 import { api } from '@services/api'
@@ -10,12 +20,27 @@ import { HistoryCard } from '@components/HistoryCard'
 import { ScreenHeader } from '@components/ScreenHeader'
 
 import { HistoryByDayDTO } from '@dtos/HistoryByDayDTO'
+import { Button } from '@components/Button'
+import { ContentModalHistory } from '@components/ContentModalHistory'
+import { useModal } from '@contexts/ModalContext'
 
 export function History() {
   const [isLoading, setIsLoading] = useState(true)
   const [exercise, setExercise] = useState<HistoryByDayDTO[]>([])
 
+  const { isModalOpen, openModal, closeModal, modalContent } = useModal()
+
+  const { isOpen, onOpen, onClose } = useDisclose()
+
   const toast = useToast()
+
+  function handleOpenModal() {
+    onOpen()
+  }
+
+  function handleCloseModal() {
+    onClose()
+  }
 
   async function fetchHistory() {
     try {
@@ -73,6 +98,10 @@ export function History() {
           px={8}
         />
       )}
+      <Button
+        title='Open Modal'
+        onPress={() => openModal(<ContentModalHistory />)}
+      />
     </VStack>
   )
 }

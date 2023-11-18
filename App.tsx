@@ -12,6 +12,7 @@ import { THEME } from './src/theme/index'
 import { Loading } from '@components/Loading'
 
 import { AuthContextProvider } from '@contexts/AuthContext'
+import { ModalProvider } from '@contexts/ModalContext'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -20,15 +21,17 @@ export default function App() {
   })
 
   return (
-    <NativeBaseProvider theme={THEME}>
-      <StatusBar
-        barStyle='light-content'
-        backgroundColor='transparent'
-        translucent
-      />
-      <AuthContextProvider>
-        {fontsLoaded ? <Routes /> : <Loading />}
-      </AuthContextProvider>
-    </NativeBaseProvider>
+    <ModalProvider>
+      <NativeBaseProvider theme={THEME}>
+        <StatusBar
+          barStyle='light-content'
+          backgroundColor='transparent'
+          translucent
+        />
+        <AuthContextProvider>
+          {fontsLoaded ? <Routes /> : <Loading />}
+        </AuthContextProvider>
+      </NativeBaseProvider>
+    </ModalProvider>
   )
 }

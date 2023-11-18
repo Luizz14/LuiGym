@@ -9,7 +9,6 @@ export function Group({ name, isActive = false, ...rest }: Props) {
   return (
     <Pressable
       mr={3}
-      maxWidth={24}
       paddingBottom={1.5}
       bg={'gray.600'}
       rounded={'md'}
@@ -25,8 +24,8 @@ export function Group({ name, isActive = false, ...rest }: Props) {
       {...rest}
     >
       <Box
-        w={24}
-        h={10}
+        h={'full'}
+        p={2}
         rounded={'md'}
         justifyContent={'center'}
         alignItems={'center'}

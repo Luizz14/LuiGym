@@ -1,100 +1,173 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigation, useFocusEffect } from '@react-navigation/native'
-import { FlatList, HStack, Heading, Text, VStack, useToast } from 'native-base'
+import {
+  Box,
+  FlatList,
+  HStack,
+  Heading,
+  Text,
+  VStack,
+  View,
+  useDisclose,
+  useToast,
+} from 'native-base'
 
 import { Group } from '@components/Group'
 import { Loading } from '@components/Loading'
 import { HomeHeader } from '@components/HomeHeader'
 import { ExerciseCard } from '@components/ExerciseCard'
 
+import firestore from '@react-native-firebase/firestore'
+
+import { Actionsheet } from 'native-base'
+
+import {
+  addWorkoutByGroup,
+  getGroups,
+  getWorkoutsByIdGroup,
+} from '@firebase/workout'
 import { api } from '@services/api'
 import { ExerciseDTO } from '@dtos/ExerciseDTO'
 
 import { AppError } from '@utils/AppError'
 import { AppNavigatorRoutesProps } from '@routes/app.routes'
+import { GroupDTO } from '@dtos/GroupDTO'
+import { Button } from '@components/Button'
+import { useModal } from '@contexts/ModalContext'
 
 export function Home() {
   const [isLoading, setIsloading] = useState(true)
-  const [groups, setGroups] = useState<string[]>([])
+  const [groups, setGroups] = useState<GroupDTO[]>([])
   const [exercise, setExercise] = useState<ExerciseDTO[]>([])
-  const [groupSelected, setGroupSelected] = useState('antebraço')
+  const [groupSelected, setGroupSelected] = useState('bíceps e costas')
+
+  const { isModalOpen, openModal, closeModal, modalContent } = useModal()
 
   const toast = useToast()
 
   const navigation = useNavigation<AppNavigatorRoutesProps>()
 
+  function handleOpenModal() {
+    openModal(
+      <View>
+        <Heading color={'black'}>FILHAD A PUTAAAAAHHHHHAHHA</Heading>
+        <Button
+          title='FECHA ESSA MERDA AI HAHAHAHAYYY'
+          onPress={() => closeModal()}
+        />
+      </View>
+    )
+  }
+
   function handleOpenExerciseDetails(exerciseId: string) {
     navigation.navigate('exercise', { exerciseId })
   }
 
-  async function fetchGroups() {
+  // async function fetchGroups() {
+  //   try {
+  //     setIsloading(true)
+
+  //     const response = await api.get('/groups')
+  //     setGroups(response.data)
+  //   } catch (error) {
+  //     const isAppError = error instanceof AppError
+  //     const title = isAppError
+  //       ? error.message
+  //       : 'Não foi possivel carregar os grupos musculares.'
+
+  //     toast.show({
+  //       title,
+  //       placement: 'top',
+  //       bgColor: 'red.500',
+  //     })
+  //   } finally {
+  //     setIsloading(false)
+  //   }
+  // }
+
+  // async function fetchExercisesByGroup() {
+  //   try {
+  //     setIsloading(true)
+
+  //     const response = await api.get(`/exercises/bygroup/${groupSelected}`)
+  //     setExercise(response.data)
+  //   } catch (error) {
+  //     const isAppError = error instanceof AppError
+  //     const title = isAppError
+  //       ? error.message
+  //       : 'Não foi possivel carregar os exercícios.'
+
+  //     toast.show({
+  //       title,
+  //       placement: 'top',
+  //       bgColor: 'red.500',
+  //     })
+  //   } finally {
+  //     setIsloading(false)
+  //   }
+  // }
+
+  async function handleAddNewDocument() {
+    try {
+      const data: ExerciseDTO = {
+        id: '3323',
+        name: 'supino',
+        repetitions: '12',
+        series: 3,
+      }
+      // await addWorkoutByGroup(data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function handleGetWorkoutsByGroup(group: GroupDTO) {
     try {
       setIsloading(true)
+      setGroupSelected(group.name)
 
-      const response = await api.get('/groups')
-      setGroups(response.data)
+      const response = await getWorkoutsByIdGroup(group.id)
+      setExercise(response)
     } catch (error) {
-      const isAppError = error instanceof AppError
-      const title = isAppError
-        ? error.message
-        : 'Não foi possivel carregar os grupos musculares.'
-
-      toast.show({
-        title,
-        placement: 'top',
-        bgColor: 'red.500',
-      })
+      console.log(error)
     } finally {
       setIsloading(false)
     }
   }
 
-  async function fetchExercisesByGroup() {
+  async function getAllGroups() {
     try {
-      setIsloading(true)
-
-      const response = await api.get(`/exercises/bygroup/${groupSelected}`)
-      setExercise(response.data)
+      const response = await getGroups()
+      setGroups(response)
     } catch (error) {
-      const isAppError = error instanceof AppError
-      const title = isAppError
-        ? error.message
-        : 'Não foi possivel carregar os exercícios.'
-
-      toast.show({
-        title,
-        placement: 'top',
-        bgColor: 'red.500',
-      })
-    } finally {
-      setIsloading(false)
+      console.log(error)
     }
   }
 
   useEffect(() => {
-    fetchGroups()
+    getAllGroups()
   }, [])
 
-  useFocusEffect(
-    useCallback(() => {
-      fetchExercisesByGroup()
-    }, [groupSelected])
-  )
+  // useFocusEffect(
+  //   useCallback(() => {
+  //     fetchExercisesByGroup()
+  //   }, [groupSelected])
+  // )
 
   return (
     <VStack>
       <HomeHeader />
-
       <FlatList
         data={groups}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Group
-            name={item}
+            name={item.name}
             isActive={
-              groupSelected.toLocaleUpperCase() === item.toLocaleUpperCase()
+              groupSelected.toLocaleUpperCase() ===
+              item.name.toLocaleUpperCase()
             }
-            onPress={() => setGroupSelected(item)}
+            onPress={() => handleGetWorkoutsByGroup(item)}
           />
         )}
         horizontal
@@ -104,7 +177,6 @@ export function Home() {
         maxH={12}
         minH={10}
       />
-
       {isLoading ? (
         <Loading />
       ) : (
@@ -133,6 +205,13 @@ export function Home() {
           />
         </VStack>
       )}
+      <Button title='Open Modal' onPress={handleOpenModal} />
+
+      <Actionsheet isOpen={isModalOpen} onClose={closeModal} color={'gray.500'}>
+        <Actionsheet.Content bgColor={'gray.400'}>
+          {modalContent}
+        </Actionsheet.Content>
+      </Actionsheet>
     </VStack>
   )
 }
